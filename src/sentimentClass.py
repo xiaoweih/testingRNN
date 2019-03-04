@@ -113,8 +113,6 @@ class Sentiment:
             return validateID(ids2)
         else: return ids
 
-
-        
     def displayIDRange(self):
         minID = min(self.word_to_id.values())+self.INDEX_FROM
         maxID = max(self.word_to_id.values())+self.INDEX_FROM
