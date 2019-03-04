@@ -10,10 +10,11 @@ from keract import *
 from utils import *
 from random import *
 import numpy as np
+import time
 
 class MCDCTestObjectiveEvaluation: 
 
-    def __init__(self): 
+    def __init__(self,r): 
         self.testObjective = MCDCTestObjective()
         self.testCase = None
         self.model = None
@@ -21,6 +22,7 @@ class MCDCTestObjectiveEvaluation:
         self.numAdv = 0
         self.numSamples = 0 
         self.numTrainingSample = 0
+        self.record = r
         
     def updateTrainingSample(self):
         self.numTrainingSample += 1
@@ -62,6 +64,12 @@ class MCDCTestObjectiveEvaluation:
     def displaySuccessRate(self): 
         print("%s samples, within which there are %s adversarial examples"%(self.numSamples,self.numAdv))
         print("the rate of adversarial examples is %s"%(self.numAdv/self.numSamples))
+
+    def writeInfo(self): 
+        self.record.write("time:%s\n"%(time.time() - self.record.startTime))
+        self.record.write("samples: %s\n"%(self.numSamples))
+        self.record.write("coverage: %s\n"%(self.coverage))
+        self.record.write("success rate: %s\n\n"%(self.numAdv/self.numSamples))
 
 class MCDCTestObjective:
     def __init__(self):
@@ -127,7 +135,7 @@ class MCDCTestObjective:
 
 class NCTestObjectiveEvaluation: 
 
-    def __init__(self): 
+    def __init__(self,r): 
         self.testObjective = NCTestObjective()
         self.testCase = None
         self.model = None
@@ -135,6 +143,7 @@ class NCTestObjectiveEvaluation:
         self.numAdv = 0
         self.numSamples = 0 
         self.numTrainingSample = 0
+        self.record = r
         
     def updateTrainingSample(self):
         self.numTrainingSample += 1
@@ -178,6 +187,13 @@ class NCTestObjectiveEvaluation:
     def displaySuccessRate(self): 
         print("%s samples, within which there are %s adversarial examples"%(self.numSamples,self.numAdv))
         print("the rate of adversarial examples is %s"%(self.numAdv/self.numSamples))
+        
+    def writeInfo(self): 
+        self.record.write("time:%s\n"%(time.time() - self.record.startTime))
+        self.record.write("samples: %s\n"%(self.numSamples))
+        self.record.write("coverage: %s\n"%(self.coverage))
+        self.record.write("success rate: %s\n\n"%(self.numAdv/self.numSamples))
+
 
 class NCTestObjective:
     def __init__(self):

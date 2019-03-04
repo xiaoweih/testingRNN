@@ -17,17 +17,19 @@ def sentimentTrainModel():
     sm = Sentiment()
     sm.train_model()
 
-def sentimentGenerateTestSuite(criterion = "NC"):
+def sentimentGenerateTestSuite(r, criterion = "NC"):
 
     sm = Sentiment()
     sm.load_model()
+    
+    r.resetTime()
     
     if criterion == "NC": 
 
         layer1 = 0
         layer2 = 1
 
-        nctoe = NCTestObjectiveEvaluation()
+        nctoe = NCTestObjectiveEvaluation(r)
         nctoe.model = sm.model
         nctoe.testObjective.layer = layer2
         
@@ -60,6 +62,7 @@ def sentimentGenerateTestSuite(criterion = "NC"):
             nctoe.updateSample(conf)
             nctoe.testCase = test2
             nctoe.update_features()
+            nctoe.writeInfo()
         
             if nctoe.coverage == 1.0 :  
                 print("statistics: ")
@@ -89,7 +92,7 @@ def sentimentGenerateTestSuite(criterion = "NC"):
         layer1 = 0
         layer2 = 1
 
-        mcdctoe = MCDCTestObjectiveEvaluation()
+        mcdctoe = MCDCTestObjectiveEvaluation(r)
         mcdctoe.model = sm.model
         mcdctoe.testObjective.layer1 = layer1
         mcdctoe.testObjective.layer2 = layer2
@@ -152,7 +155,8 @@ def sentimentGenerateTestSuite(criterion = "NC"):
                     mcdctoe.testCase = test2
                     # update feature pairs that have been tested
                     mcdctoe.update_features(f1,f2)
-        
+                    mcdctoe.writeInfo()
+
                     if mcdctoe.coverage == 1.0 :  
                         print("statistics: ")
                         print("reach 100% coverage")

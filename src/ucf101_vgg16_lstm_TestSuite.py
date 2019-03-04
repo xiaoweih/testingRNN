@@ -14,10 +14,14 @@ K.set_learning_phase(1)
 K.set_image_dim_ordering('tf')
 
 
-def vgg16_lstm_test(criterion = "NC"):
+def vgg16_lstm_test(r, criterion = "NC"):
 
     uvlc = ucf101_vgg16_lstm_class()
     uvlc.model.summary()
+    
+    
+    r.resetTime()
+
 
     if criterion == "NC": 
     
@@ -26,7 +30,7 @@ def vgg16_lstm_test(criterion = "NC"):
         
         epsilon = 0.0001 
         
-        nctoe = NCTestObjectiveEvaluation()
+        nctoe = NCTestObjectiveEvaluation(r)
         nctoe.model = uvlc.model
         nctoe.testObjective.layer = layer2
         
@@ -61,6 +65,8 @@ def vgg16_lstm_test(criterion = "NC"):
             nctoe.updateSample(conf)
             nctoe.testCase = test2
             nctoe.update_features()
+            nctoe.writeInfo()
+
         
             if nctoe.coverage == 1.0 :
                 print("statistics: ")  
@@ -83,7 +89,7 @@ def vgg16_lstm_test(criterion = "NC"):
         
         epsilon = 0.0001 
 
-        mcdctoe = MCDCTestObjectiveEvaluation()
+        mcdctoe = MCDCTestObjectiveEvaluation(r)
         mcdctoe.model = uvlc.model
         mcdctoe.testObjective.layer1 = layer1
         mcdctoe.testObjective.layer2 = layer2
@@ -138,6 +144,7 @@ def vgg16_lstm_test(criterion = "NC"):
                     mcdctoe.updateSample(conf)
                     mcdctoe.testCase = test2
                     mcdctoe.update_features(f1,f2)
+                    mcdctoe.writeInfo()
         
                     if mcdctoe.coverage == 1.0 :  
                         print("statistics: ")
