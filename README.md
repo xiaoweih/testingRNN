@@ -2,7 +2,7 @@
 
 Command to run: 
 
-python main.py --model \<modelName> --criterion \<criteriaName> --mode \<modeName>
+python main.py --model \<modelName> --criterion \<criteriaName> --mode \<modeName> -- output \<output file path>
 
 \<modelName> can be in {sentiment,ucf101}
   
