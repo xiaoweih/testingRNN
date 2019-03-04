@@ -6,6 +6,7 @@ from keras import *
 from keras.models import *
 import copy
 import keras.backend as K
+import time
 
 import sys
 sys.path.append('example')
@@ -17,8 +18,6 @@ from vgg16_lstm_train import vgg16_lstm_train
 
 
 def main(train=False):
-
-    #modelName = "sentiment"
     
     parser=argparse.ArgumentParser(description='testing for recurrent neural networks' )
     parser.add_argument('--model', dest='modelName', default='sentiment', help='')
@@ -46,5 +45,8 @@ def main(train=False):
     else: 
         print("Please specify a model from {sentiment, UCF101}")
     
-if __name__=="__main__":
-  main()
+if __name__ == "__main__":
+
+    start_time = time.time()
+    main()
+    print("--- %s seconds ---" % (time.time() - start_time))
