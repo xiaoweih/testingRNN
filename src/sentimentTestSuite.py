@@ -62,10 +62,11 @@ def sentimentGenerateTestSuite(criterion = "NC"):
             nctoe.update_features()
         
             if nctoe.coverage == 1.0 :  
+                print("statistics: ")
                 print("reach 100% coverage")
                 nctoe.displayTrainingSamples()
                 nctoe.displaySuccessRate()
-                exit()
+                return
             else: 
                 nctoe.testObjective.displayRemainingFeatures()
          
@@ -153,10 +154,11 @@ def sentimentGenerateTestSuite(criterion = "NC"):
                     mcdctoe.update_features(f1,f2)
         
                     if mcdctoe.coverage == 1.0 :  
+                        print("statistics: ")
                         print("reach 100% coverage")
                         mcdctoe.displayTrainingSamples()
                         mcdctoe.displaySuccessRate()
-                        exit()
+                        return
                     else: 
                         mcdctoe.testObjective.displayRemainingFeaturePairs()
                         
@@ -170,6 +172,9 @@ def sentimentGenerateTestSuite(criterion = "NC"):
         mcdctoe.displayTrainingSamples()
         mcdctoe.displaySuccessRate()
             
-    else: print("coverage metric hasn't been developed.")
+    else: 
+        
+        print("coverage metric hasn't been developed.")
+        return
     
     

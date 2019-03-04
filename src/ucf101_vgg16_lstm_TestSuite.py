@@ -62,11 +62,12 @@ def vgg16_lstm_test(criterion = "NC"):
             nctoe.testCase = test2
             nctoe.update_features()
         
-            if nctoe.coverage == 1.0 :  
+            if nctoe.coverage == 1.0 :
+                print("statistics: ")  
                 print("reach 100% coverage")
                 nctoe.displayTrainingSamples()
                 nctoe.displaySuccessRate()
-                exit()
+                return
             else: 
                 nctoe.testObjective.displayRemainingFeatures()
 
@@ -139,10 +140,11 @@ def vgg16_lstm_test(criterion = "NC"):
                     mcdctoe.update_features(f1,f2)
         
                     if mcdctoe.coverage == 1.0 :  
+                        print("statistics: ")
                         print("reach 100% coverage")
                         mcdctoe.displayTrainingSamples()
                         mcdctoe.displaySuccessRate()
-                        exit()
+                        return
                     else: 
                         mcdctoe.testObjective.displayRemainingFeaturePairs()
                         
