@@ -24,7 +24,7 @@ def main(train=False):
     parser.add_argument('--model', dest='modelName', default='sentiment', help='')
     parser.add_argument('--criterion', dest='criterion', default='NC', help='')
     parser.add_argument('--mode', dest='mode', default='test', help='')
-    parser.add_argument('--output', dest='filename', default='record.txt', help='')
+    parser.add_argument('--output', dest='filename', default='./record.txt', help='')
     
     args=parser.parse_args()
     
