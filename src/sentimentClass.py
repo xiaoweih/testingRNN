@@ -86,8 +86,11 @@ class Sentiment:
         text = self.fromIDToText(test)
         print("review content: %s"%(self.fromIDToText(test)))
         conf = get_activations_single_layer(model,np.array([test]),self.layerName(-1))
-        print("current confidence: %s\n"%(conf))
-        return conf
+        print("current confidence: %.2f\n"%(conf))
+        if conf >= 0.5 : 
+            return (1,conf)
+        else: 
+            return (-1,1-conf)
 
     def pre_processing_X(self): 
         self.X_train = sequence.pad_sequences(self.X_train, maxlen=self.max_review_length) 

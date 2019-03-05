@@ -21,6 +21,7 @@ def vgg16_lstm_test(r, criterion = "NC"):
     
     
     r.resetTime()
+    epsilon = 0.0001 
 
 
     if criterion == "NC": 
@@ -28,7 +29,6 @@ def vgg16_lstm_test(r, criterion = "NC"):
         layer1 = 0
         layer2 = 1
         
-        epsilon = 0.0001 
         
         nctoe = NCTestObjectiveEvaluation(r)
         nctoe.model = uvlc.model
@@ -58,15 +58,15 @@ def vgg16_lstm_test(r, criterion = "NC"):
             b1 = 0
             b2 = 0.01
             # problem specific part 
-            test2 = getNextInputByGradient(uvlc,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,test,test,last_activation)
+            (label1,conf1) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test)
+            test2 = getNextInputByGradient(uvlc,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,test,test,last_activation,0)
             print("found a test cases ...")
 
-            conf = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
-            nctoe.updateSample(conf)
+            (label2,conf2) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
+            nctoe.updateSample(label2,label1)
             nctoe.testCase = test2
             nctoe.update_features()
             nctoe.writeInfo()
-
         
             if nctoe.coverage == 1.0 :
                 print("statistics: ")  
@@ -87,7 +87,6 @@ def vgg16_lstm_test(r, criterion = "NC"):
         layer1 = 0
         layer2 = 1
         
-        epsilon = 0.0001 
 
         mcdctoe = MCDCTestObjectiveEvaluation(r)
         mcdctoe.model = uvlc.model
@@ -127,7 +126,7 @@ def vgg16_lstm_test(r, criterion = "NC"):
             Y = K.sum(K.square(X)) # loss function
             fn = K.function([X], K.gradients(Y, [X])) #function to call the gradient    
             #get next input test2 from the current input test 
-            b1 = 0.01
+            b1 = 0.003
             b2 = 0.01
                         
             for index in range(1000): 
@@ -135,13 +134,14 @@ def vgg16_lstm_test(r, criterion = "NC"):
                 # problem specific part 
                 images, preprocessed_images, test, last_activation = uvlc.predict(index)
                 mcdctoe.updateTrainingSample()
-      
-                test2 = getNextInputByGradientAndFeatures(uvlc,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,feature1,feature2,test,test,last_activation)
+
+                (label1,conf1) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test)
+                test2 = getNextInputByGradientAndFeatures(uvlc,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,feature1,feature2,test,test,last_activation,0)
                 
                 if not (test2 is None): 
 
-                    conf = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
-                    mcdctoe.updateSample(conf)
+                    (label2,conf2) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
+                    mcdctoe.updateSample(label2,label1)
                     mcdctoe.testCase = test2
                     mcdctoe.update_features(f1,f2)
                     mcdctoe.writeInfo()

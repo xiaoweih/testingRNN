@@ -50,7 +50,7 @@ class ucf101_vgg16_lstm_class:
         #print("current confidence: %s"%(conf))
         index, value = max(enumerate(conf), key=operator.itemgetter(1))
         print("the label is: %s, with confidence %s"%(self.predictor.labels_idx2word[index],value))
-        return value
+        return (index,value)
 
     def layerName(self,layer):
         layerNames = [layer.name for layer in self.model.layers]

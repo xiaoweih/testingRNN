@@ -24,6 +24,8 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
     
     r.resetTime()
     
+    epsilon = 0.01 
+    
     if criterion == "NC": 
 
         layer1 = 0
@@ -46,7 +48,6 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
         nctoe.testObjective.feature = (np.argwhere(activations >= np.min(activations))).tolist()
         nctoe.testObjective.setOriginalNumOfFeature()
 
-        epsilon = 0.0001 
 
         for test in sm.X_train :
         
@@ -57,24 +58,30 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
             #get next input test2 from the current input test 
             b1 = 0
             b2 = 0.01
-            test2 = getNextInputByCustomisedFunction(sm,fn,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,test,test)
-            conf = sm.displayInfo(test2)
-            nctoe.updateSample(conf)
-            nctoe.testCase = test2
-            nctoe.update_features()
-            nctoe.writeInfo()
+            (label1,conf1) = sm.displayInfo(test)
+            test2 = getNextInputByCustomisedFunction(sm,fn,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,test,test,0)
+            
+            if not (test2 is None): 
+            
+                (label2,conf2) = sm.displayInfo(test2)
+                nctoe.updateSample(label2,label1)
+                nctoe.testCase = test2
+                nctoe.update_features()
+                nctoe.writeInfo()
         
-            if nctoe.coverage == 1.0 :  
-                print("statistics: ")
-                print("reach 100% coverage")
-                nctoe.displayTrainingSamples()
-                nctoe.displaySuccessRate()
-                return
-            else: 
-                nctoe.testObjective.displayRemainingFeatures()
+                if nctoe.coverage == 1.0 :  
+                    print("statistics: ")
+                    print("reach 100% coverage")
+                    nctoe.displayTrainingSamples()
+                    nctoe.displaySamples()
+                    nctoe.displaySuccessRate()
+                    return
+                else: 
+                    nctoe.testObjective.displayRemainingFeatures()
          
         print("statistics: ")       
         nctoe.displayCoverage()
+        nctoe.displaySamples()
         nctoe.displayTrainingSamples()
         nctoe.displaySuccessRate()
                 
@@ -121,8 +128,6 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
         # set feature pairs
         mcdctoe.testObjective.initialisePairOfFeatures()
         #print("pairs: %s"%(mcdctoe.testObjective.pairOfFeatures))
-
-        epsilon = 0.0001 
         
         while len(mcdctoe.testObjective.pairOfFeatures) > 0: 
         
@@ -140,18 +145,19 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
             Y = K.sum(K.square(X)) # loss function
             fn = K.function([X], K.gradients(Y, [X])) #function to call the gradient    
             #get next input test2 from the current input test 
-            b1 = 0.01
+            b1 = 0.003
             b2 = 0.01
             
             for test in sm.X_train :
 
+                (label1,conf1) = sm.displayInfo(test)
                 mcdctoe.updateTrainingSample()
-                test2 = getNextInputByCustomisedFunctionAndFeatures(sm,fn,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,feature1,feature2,test,test)
+                test2 = getNextInputByCustomisedFunctionAndFeatures(sm,fn,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,feature1,feature2,test,test,0)
                 
                 if not (test2 is None): 
                                 
-                    conf = sm.displayInfo(test2)
-                    mcdctoe.updateSample(conf)
+                    (label2,conf2) = sm.displayInfo(test2)
+                    mcdctoe.updateSample(label2,label1)
                     mcdctoe.testCase = test2
                     # update feature pairs that have been tested
                     mcdctoe.update_features(f1,f2)
@@ -161,6 +167,7 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
                         print("statistics: ")
                         print("reach 100% coverage")
                         mcdctoe.displayTrainingSamples()
+                        mcdctoe.displaySamples()
                         mcdctoe.displaySuccessRate()
                         return
                     else: 
@@ -168,11 +175,12 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
                         
                     break
                     
-                else: 
-                    print("I did not find a test case in this round!")
+                #else: 
+                #    print("I did not find a test case in this round!")
                     
         print("statistics: ")
         mcdctoe.displayCoverage()
+        nctoe.displaySamples()
         mcdctoe.displayTrainingSamples()
         mcdctoe.displaySuccessRate()
             

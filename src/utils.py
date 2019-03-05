@@ -7,10 +7,16 @@ from keras.preprocessing.image import img_to_array
 from keras.optimizers import SGD
 
 def lp_norm(p,n1,n2):
-    return np.linalg.norm(np.array([n1]).ravel()-np.array([n2]).ravel(),ord=p) 
+    n1 = np.array([n1]).ravel()
+    n2 = np.array([n2]).ravel()
+    m = np.count_nonzero(n1-n2)
+    return np.linalg.norm(n1-n2,ord=p)/float(m)
     
 def l2_norm(n1,n2):
-    return lp_norm(2,n1,n2)
+    n1 = np.array([n1]).ravel()
+    n2 = np.array([n2]).ravel()
+    m = np.count_nonzero(n1-n2)
+    return np.linalg.norm(n1-n2,ord=2)/float(m)
     
 def getActivationValue(model,layer,test):
     #print("xxxx %s"%(str(self.model.layers[1].input.shape)))

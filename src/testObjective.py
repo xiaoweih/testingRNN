@@ -50,26 +50,31 @@ class MCDCTestObjectiveEvaluation:
         self.displayCoverage()
         
     def displayCoverage(self):
-        print("coverage up to now: %s\n"%(self.coverage))
+        print("coverage up to now: %.2f\n"%(self.coverage))
                   
     def evaluate(self): 
         if self.testObjective.feature == []: 
             return True
         else: return False
                 
-    def updateSample(self,conf): 
-        if conf > 0.5: self.numAdv += 1
+    def updateSample(self,label2,label1): 
+        if label2 != label1: self.numAdv += 1
         self.numSamples += 1
+        self.displaySuccessRate()
+        
+    def displaySamples(self):
+        print("%s samples are considered"%(self.numSamples)) 
         
     def displaySuccessRate(self): 
         print("%s samples, within which there are %s adversarial examples"%(self.numSamples,self.numAdv))
-        print("the rate of adversarial examples is %s"%(self.numAdv/self.numSamples))
+        print("the rate of adversarial examples is %.2f"%(self.numAdv/self.numSamples))
 
     def writeInfo(self): 
         self.record.write("time:%s\n"%(time.time() - self.record.startTime))
+        self.record.write("training samples: %s\n"%(self.numTrainingSample))
         self.record.write("samples: %s\n"%(self.numSamples))
-        self.record.write("coverage: %s\n"%(self.coverage))
-        self.record.write("success rate: %s\n\n"%(self.numAdv/self.numSamples))
+        self.record.write("coverage: %.2f\n"%(self.coverage))
+        self.record.write("success rate: %.2f\n\n"%(self.numAdv/self.numSamples))
 
 class MCDCTestObjective:
     def __init__(self):
@@ -173,26 +178,31 @@ class NCTestObjectiveEvaluation:
         self.displayCoverage()
         
     def displayCoverage(self):
-        print("coverage up to now: %s\n"%(self.coverage))
+        print("coverage up to now: %.2f\n"%(self.coverage))
                   
     def evaluate(self): 
         if self.testObjective.feature == []: 
             return True
         else: return False
                 
-    def updateSample(self,conf): 
-        if conf > 0.5: self.numAdv += 1
+    def updateSample(self,label2,label1): 
+        if label2 != label1: self.numAdv += 1
         self.numSamples += 1
+        self.displaySuccessRate()
+        
+    def displaySamples(self):
+        print("%s samples are considered"%(self.numSamples)) 
         
     def displaySuccessRate(self): 
         print("%s samples, within which there are %s adversarial examples"%(self.numSamples,self.numAdv))
-        print("the rate of adversarial examples is %s"%(self.numAdv/self.numSamples))
+        print("the rate of adversarial examples is %.2f"%(self.numAdv/self.numSamples))
         
     def writeInfo(self): 
         self.record.write("time:%s\n"%(time.time() - self.record.startTime))
+        self.record.write("training samples: %s\n"%(self.numTrainingSample))
         self.record.write("samples: %s\n"%(self.numSamples))
-        self.record.write("coverage: %s\n"%(self.coverage))
-        self.record.write("success rate: %s\n\n"%(self.numAdv/self.numSamples))
+        self.record.write("coverage: %.2f\n"%(self.coverage))
+        self.record.write("success rate: %.2f\n\n"%(self.numAdv/self.numSamples))
 
 
 class NCTestObjective:
