@@ -23,6 +23,7 @@ class MCDCTestObjectiveEvaluation:
         self.numSamples = 0 
         self.numTrainingSample = 0
         self.record = r
+        self.perturbations = []
         
     def updateTrainingSample(self):
         self.numTrainingSample += 1
@@ -57,8 +58,10 @@ class MCDCTestObjectiveEvaluation:
             return True
         else: return False
                 
-    def updateSample(self,label2,label1): 
-        if label2 != label1: self.numAdv += 1
+    def updateSample(self,label2,label1,m): 
+        if label2 != label1: 
+            self.numAdv += 1
+            self.perturbations.append(m)
         self.numSamples += 1
         self.displaySuccessRate()
         
@@ -68,13 +71,19 @@ class MCDCTestObjectiveEvaluation:
     def displaySuccessRate(self): 
         print("%s samples, within which there are %s adversarial examples"%(self.numSamples,self.numAdv))
         print("the rate of adversarial examples is %.2f"%(self.numAdv/self.numSamples))
+        
+    def displayPerturbations(self):
+        print("the average perturbation of the adversarial examples is %s"%(sum(self.perturbations)/self.numAdv))
+        print("the smallest perturbation of the adversarial examples is %s"%(min(self.perturbations)))
 
     def writeInfo(self): 
         self.record.write("time:%s\n"%(time.time() - self.record.startTime))
         self.record.write("training samples: %s\n"%(self.numTrainingSample))
         self.record.write("samples: %s\n"%(self.numSamples))
         self.record.write("coverage: %.2f\n"%(self.coverage))
-        self.record.write("success rate: %.2f\n\n"%(self.numAdv/self.numSamples))
+        self.record.write("success rate: %.2f\n"%(self.numAdv/self.numSamples))
+        self.record.write("average perturbation: %.2f\n"%(sum(self.perturbations)/self.numAdv))
+        self.record.write("minimum perturbation: %.2f\n\n"%(min(self.perturbations)))
 
 class MCDCTestObjective:
     def __init__(self):
@@ -149,6 +158,8 @@ class NCTestObjectiveEvaluation:
         self.numSamples = 0 
         self.numTrainingSample = 0
         self.record = r
+        self.perturbations = []
+
         
     def updateTrainingSample(self):
         self.numTrainingSample += 1
@@ -185,8 +196,10 @@ class NCTestObjectiveEvaluation:
             return True
         else: return False
                 
-    def updateSample(self,label2,label1): 
-        if label2 != label1: self.numAdv += 1
+    def updateSample(self,label2,label1,m): 
+        if label2 != label1: 
+            self.numAdv += 1
+            self.perturbations.append(m)
         self.numSamples += 1
         self.displaySuccessRate()
         
@@ -197,13 +210,18 @@ class NCTestObjectiveEvaluation:
         print("%s samples, within which there are %s adversarial examples"%(self.numSamples,self.numAdv))
         print("the rate of adversarial examples is %.2f"%(self.numAdv/self.numSamples))
         
+    def displayPerturbations(self):
+        print("the average perturbation of the adversarial examples is %s"%(sum(self.perturbations)/self.numAdv))
+        print("the smallest perturbation of the adversarial examples is %s"%(min(self.perturbations)))
+        
     def writeInfo(self): 
         self.record.write("time:%s\n"%(time.time() - self.record.startTime))
         self.record.write("training samples: %s\n"%(self.numTrainingSample))
         self.record.write("samples: %s\n"%(self.numSamples))
         self.record.write("coverage: %.2f\n"%(self.coverage))
         self.record.write("success rate: %.2f\n\n"%(self.numAdv/self.numSamples))
-
+        if self.numAdv > 0 : self.record.write("average perturbation: %.2f\n"%(sum(self.perturbations)/self.numAdv))
+        self.record.write("minimum perturbation: %.2f\n\n"%(min(self.perturbations)))
 
 class NCTestObjective:
     def __init__(self):

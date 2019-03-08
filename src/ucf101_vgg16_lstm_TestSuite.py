@@ -9,6 +9,7 @@ from testCaseGeneration import *
 from ucf101_vgg16_lstm_class import *
 from utils import lp_norm
 from testObjective import *
+from oracle import *
 
 K.set_learning_phase(1)
 K.set_image_dim_ordering('tf')
@@ -22,6 +23,7 @@ def vgg16_lstm_test(r, criterion = "NC"):
     
     r.resetTime()
     epsilon = 0.0001 
+    oracleRadius = 0.1
 
 
     if criterion == "NC": 
@@ -48,7 +50,8 @@ def vgg16_lstm_test(r, criterion = "NC"):
             
             # problem specific part 
             images, preprocessed_images, test, last_activation = uvlc.predict(index)
-    
+            o = oracle(test,2,oracleRadius)
+
             # debugging purpose
             uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test)
             features = uvlc.model.predict(np.array([uvlc.predictor.vgg16_model.predict(preprocessed_images)])).ravel()
@@ -60,22 +63,24 @@ def vgg16_lstm_test(r, criterion = "NC"):
             # problem specific part 
             (label1,conf1) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test)
             test2 = getNextInputByGradient(uvlc,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,test,test,last_activation,0)
-            print("found a test cases ...")
 
-            (label2,conf2) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
-            nctoe.updateSample(label2,label1)
-            nctoe.testCase = test2
-            nctoe.update_features()
-            nctoe.writeInfo()
+            if not (test2 is None): 
+
+                print("found a test cases of shape %s..."%(str(test2.shape)))
+                (label2,conf2) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
+                nctoe.updateSample(label2,label1,o.measure(test2))
+                nctoe.testCase = test2
+                nctoe.update_features()
+                nctoe.writeInfo()
         
-            if nctoe.coverage == 1.0 :
-                print("statistics: ")  
-                print("reach 100% coverage")
-                nctoe.displayTrainingSamples()
-                nctoe.displaySuccessRate()
-                return
-            else: 
-                nctoe.testObjective.displayRemainingFeatures()
+                if nctoe.coverage == 1.0 :
+                    print("statistics: ")  
+                    print("reach 100% coverage")
+                    nctoe.displayTrainingSamples()
+                    nctoe.displaySuccessRate()
+                    return
+                else: 
+                    nctoe.testObjective.displayRemainingFeatures()
 
         print("statistics: ")
         nctoe.displayCoverage()
@@ -134,6 +139,8 @@ def vgg16_lstm_test(r, criterion = "NC"):
                 # problem specific part 
                 images, preprocessed_images, test, last_activation = uvlc.predict(index)
                 mcdctoe.updateTrainingSample()
+                o = oracle(test,2,oracleRadius)
+
 
                 (label1,conf1) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test)
                 test2 = getNextInputByGradientAndFeatures(uvlc,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,feature1,feature2,test,test,last_activation,0)
@@ -141,7 +148,7 @@ def vgg16_lstm_test(r, criterion = "NC"):
                 if not (test2 is None): 
 
                     (label2,conf2) = uvlc.displayInfo(uvlc.getFunctors(uvlc.model),test2)
-                    mcdctoe.updateSample(label2,label1)
+                    mcdctoe.updateSample(label2,label1,o.measure(test2))
                     mcdctoe.testCase = test2
                     mcdctoe.update_features(f1,f2)
                     mcdctoe.writeInfo()

@@ -57,17 +57,17 @@ def getNextInputByGradientAndFeatures(sm,epsilon,layer1,layer2,g1,b1,g2,b2,featu
 
     lastactivation2 = get_activations_single_layer(model,np.array([newtest]),sm.layerName(-1))
 
-    if g1(act1x,act2x) > b1 and g2(act1y,act2y) > b2 and g2(opp_act1x,opp_act2x) <= b1 : 
+    if g1(act1x,act2x) > b1 and g2(act1y,act2y) > b2 and g1(opp_act1x,opp_act2x) <= b1 : 
         print("found a test case of shape %s!"%(str(newtest.shape)))
         return newtest
     elif g1(act1x,act2x) > 10* b1 or g2(act1y,act2y) > 10 * b2 or n > 10: 
-        print("failed to find a test case in this round! (current distances are %.4f and %.4f and %.4f) "%(g1(act1x,act2x),g2(act1y,act2y),g2(opp_act1x,opp_act2x)))
+        print("failed to find a test case in this round! (current distances are %.4f and %.4f and %.4f) "%(g1(act1x,act2x),g2(act1y,act2y),g1(opp_act1x,opp_act2x)))
         return None
     elif np.array_equal(test2,newtest):
-        print("enlarge the epsilon by 10 times, and continue ... (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g2(opp_act1x,opp_act2x)))
+        print("enlarge the epsilon by 10 times, and continue ... (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g1(opp_act1x,opp_act2x)))
         return getNextInputByGradientAndFeatures(sm,epsilon*10,layer1,layer2,g1,b1,g2,b2,feature1,feature2,test1,newtest,lastactivation2, n+1)
     else: 
-        print("moving a step away, and continue ... (current distances are %.4f and %.4f and %.4f) "%(g1(act1x,act2x),g2(act1y,act2y),g2(opp_act1x,opp_act2x)))
+        print("moving a step away, and continue ... (current distances are %.4f and %.4f and %.4f) "%(g1(act1x,act2x),g2(act1y,act2y),g1(opp_act1x,opp_act2x)))
         return getNextInputByGradientAndFeatures(sm,epsilon,layer1,layer2,g1,b1,g2,b2,feature1,feature2,test1,newtest,lastactivation2, n+1)
 
 
@@ -114,17 +114,17 @@ def getNextInputByCustomisedFunctionAndFeatures(sm,fn,epsilon,layer1,layer2,g1,b
     act2x, opp_act2x = getFeatureFromLayer(act2x,feature1)
     act2y, _ = getFeatureFromLayer(act2y,feature2)
         
-    if g1(act1x,act2x) > b1 and g2(act1y,act2y) > b2 and g2(opp_act1x,opp_act2x) <= b1: 
+    if g1(act1x,act2x) > b1 and g2(act1y,act2y) > b2 and g1(opp_act1x,opp_act2x) <= b1: 
         print("found a test case of shape %s!"%(str(newtest.shape)))
         return newtest
     elif g1(act1x,act2x) > 10* b1 or g2(act1y,act2y) > 10 * b2 or n > 10: 
-        print("failed to find a test case in this round! (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g2(opp_act1x,opp_act2x)))
+        print("failed to find a test case in this round! (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g1(opp_act1x,opp_act2x)))
         return None
     elif np.array_equal(test2,newtest):
-        print("enlarge the epsilon by 10 times, and continue ... (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g2(opp_act1x,opp_act2x)))
+        print("enlarge the epsilon by 10 times, and continue ... (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g1(opp_act1x,opp_act2x)))
         return getNextInputByCustomisedFunctionAndFeatures(sm,fn,epsilon*10,layer1,layer2,g1,b1,g2,b2,feature1,feature2,test1,newtest, n+1)
     else: 
-        print("moving a step away, and continue ... (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g2(opp_act1x,opp_act2x)))
+        print("moving a step away, and continue ... (current distances are %.4f and %.4f and %.4f)"%(g1(act1x,act2x),g2(act1y,act2y),g1(opp_act1x,opp_act2x)))
         return getNextInputByCustomisedFunctionAndFeatures(sm,fn,epsilon,layer1,layer2,g1,b1,g2,b2,feature1,feature2,test1,newtest, n+1)
         
         

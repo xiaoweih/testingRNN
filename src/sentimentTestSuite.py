@@ -11,6 +11,7 @@ from sentimentClass import Sentiment
 from testCaseGeneration import *
 from utils import lp_norm, powerset
 from testObjective import *
+from oracle import *
 
 def sentimentTrainModel(): 
 
@@ -24,7 +25,9 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
     
     r.resetTime()
     
-    epsilon = 0.01 
+    epsilon = 0.01
+    oracleRadius = 0.1
+ 
     
     if criterion == "NC": 
 
@@ -52,6 +55,7 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
         for test in sm.X_train :
         
             nctoe.updateTrainingSample()
+            o = oracle(test,2,oracleRadius)
             X = K.placeholder(ndim=2) #specify the right placeholder
             Y = K.sum(K.square(X)) # loss function
             fn = K.function([X], K.gradients(Y, [X])) #function to call the gradient    
@@ -64,7 +68,7 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
             if not (test2 is None): 
             
                 (label2,conf2) = sm.displayInfo(test2)
-                nctoe.updateSample(label2,label1)
+                nctoe.updateSample(label2,label1,o.measure(test2))
                 nctoe.testCase = test2
                 nctoe.update_features()
                 nctoe.writeInfo()
@@ -152,12 +156,13 @@ def sentimentGenerateTestSuite(r, criterion = "NC"):
 
                 (label1,conf1) = sm.displayInfo(test)
                 mcdctoe.updateTrainingSample()
+                o = oracle(test,2,oracleRadius)
                 test2 = getNextInputByCustomisedFunctionAndFeatures(sm,fn,epsilon,layer1,layer2,l2_norm,b1,l2_norm,b2,feature1,feature2,test,test,0)
                 
                 if not (test2 is None): 
                                 
                     (label2,conf2) = sm.displayInfo(test2)
-                    mcdctoe.updateSample(label2,label1)
+                    mcdctoe.updateSample(label2,label1,o.measure(test2))
                     mcdctoe.testCase = test2
                     # update feature pairs that have been tested
                     mcdctoe.update_features(f1,f2)
