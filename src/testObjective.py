@@ -73,7 +73,7 @@ class MCDCTestObjectiveEvaluation:
         print("the rate of adversarial examples is %.2f"%(self.numAdv/self.numSamples))
         
     def displayPerturbations(self):
-        print("the average perturbation of the adversarial examples is %s"%(sum(self.perturbations)/self.numAdv))
+        if self.numAdv > 0: print("the average perturbation of the adversarial examples is %s"%(sum(self.perturbations)/self.numAdv))
         print("the smallest perturbation of the adversarial examples is %s"%(min(self.perturbations)))
 
     def writeInfo(self): 
@@ -82,7 +82,7 @@ class MCDCTestObjectiveEvaluation:
         self.record.write("samples: %s\n"%(self.numSamples))
         self.record.write("coverage: %.2f\n"%(self.coverage))
         self.record.write("success rate: %.2f\n"%(self.numAdv/self.numSamples))
-        self.record.write("average perturbation: %.2f\n"%(sum(self.perturbations)/self.numAdv))
+        if self.numAdv > 0: self.record.write("average perturbation: %.2f\n"%(sum(self.perturbations)/self.numAdv))
         self.record.write("minimum perturbation: %.2f\n\n"%(min(self.perturbations)))
 
 class MCDCTestObjective:
@@ -211,7 +211,7 @@ class NCTestObjectiveEvaluation:
         print("the rate of adversarial examples is %.2f"%(self.numAdv/self.numSamples))
         
     def displayPerturbations(self):
-        print("the average perturbation of the adversarial examples is %s"%(sum(self.perturbations)/self.numAdv))
+        if self.numAdv > 0 : print("the average perturbation of the adversarial examples is %s"%(sum(self.perturbations)/self.numAdv))
         print("the smallest perturbation of the adversarial examples is %s"%(min(self.perturbations)))
         
     def writeInfo(self): 
