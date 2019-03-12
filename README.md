@@ -16,4 +16,4 @@ where
 
 For example: 
 
-> python main.py --model sentiment --criterion MCDC --mode test --output statistics/sentimentNC.txt
+> python main.py --model sentiment --criterion NC --mode test --output statistics/sentimentNC.txt
